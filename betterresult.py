@@ -47,16 +47,6 @@ decodging_conv_layer_3 = Conv2D(64, (3, 3), activation='relu')(decodging_upsampl
 decodging_upsampling_layer_3 = UpSampling2D((2, 2))(decodging_conv_layer_3)
 output_layer = Conv2D(1, (3, 3), activation='sigmoid', padding='same')(decodging_upsampling_layer_3)
 
-
-'''
-#encoded = Dense(128, activation='relu')(input_img)
-#encoded = Dense(64, activation='relu')(encoded)
-#encoded = Dense(32, activation='relu')(encoded)
-#encoded = Dense(16, activation='relu')(encoded) #the latent layer 
-#decoded = Dense(64, activation='relu')(encoded)
-#decoded = Dense(128, activation='relu')(decoded)
-#decoded = Dense(784, activation='sigmoid')(decoded)
-'''
 autoencoder = Model(input_img, output_layer)
 autoencoder.summary()
 
@@ -74,7 +64,6 @@ dp = Dropout(0.25)(encode_layer)
 flat = Flatten()(dp)
 
 den = Dense(64, activation='relu')(flat)
-#dp2 = Dropout(0.5)(den)
 output = Dense(num_classes, activation='softmax')(den)
 autoencoder = Model(input_img,output)
 #plot_model(autoencoder, 'ae.png', show_shapes=True)
@@ -83,8 +72,6 @@ autoencoder.compile(optimizer=Adam(1e-3), loss='mean_squared_error', metrics=['a
 y_train =to_categorical(train_label, num_classes)
 y_test = to_categorical(valid_label, num_classes)
 autoencoder.fit(train_X,y_train,epochs=2,batch_size=5, verbose=1,validation_data=(valid_X, y_test))
-
-#print(train_X.shape, train_label)
 
 score = autoencoder.evaluate(valid_X, y_test, verbose=0)
 print('Test loss:', score[0])
